@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Bolão Copa do Mundo 2026</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<meta name="theme-color" content="#0b1220">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bolão Copa">
+<style>
+  html,body{margin:0;height:100%;background:#0b1220;overflow:hidden}
+  #app{border:0;width:100%;height:100vh;height:100dvh;display:block}
+  #splash{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:radial-gradient(800px 400px at 50% 0,#16233a,#0b1220);color:#e8eef7;font-family:Arial,sans-serif;gap:14px}
+  #splash img{width:96px;height:96px;border-radius:22px}
+  #splash .t{font-size:15px;color:#8aa0bd}
+</style>
+</head>
+<body>
+  <div id="splash"><img src="icon-192.png" alt=""><div class="t">Carregando o bolão…</div></div>
+  <iframe id="app" allow="clipboard-write"></iframe>
+<script>
+  // App dedicado ao Bolão Copa do Mundo 2026 — origem própria (PWA separado da AMBAR).
+  var BASE = 'https://script.google.com/macros/s/AKfycbwxLnytJy0TpQvBOe7OFYKBSOeNA-38l_d2cOJi2Ym5gHwILslgavYpkrk51oi2Dec1/exec';
+  var q = new URLSearchParams(location.search);
+  var KEY = 'bolao_token_copa';
+  try { // migra a chave antiga, se existir nesta origem
+    if (!localStorage.getItem(KEY)) {
+      var old = localStorage.getItem('bolao_token'); if (old) localStorage.setItem(KEY, old);
+    }
+  } catch (e) {}
+  var p = q.get('p');
+  try { if (p) localStorage.setItem(KEY, p); else p = localStorage.getItem(KEY); } catch (e) {}
+  var adm = q.get('admin');
+  var AKEY = 'bolao_admin_copa';
+  try { if (adm) localStorage.setItem(AKEY, adm); else adm = localStorage.getItem(AKEY); } catch (e) {}
+  var v = q.get('v');
+  var parts = [];
+  if (p) parts.push('p=' + encodeURIComponent(p));
+  if (v) parts.push('v=' + encodeURIComponent(v));
+  if (adm) parts.push('admin=' + encodeURIComponent(adm));
+  var src = BASE + (parts.length ? ('?' + parts.join('&')) : '');
+  var ifr = document.getElementById('app');
+  ifr.onload = function(){ var s=document.getElementById('splash'); if(s) s.style.display='none'; };
+  ifr.src = src;
+  if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function(){}); }
+  // Logout: limpa o cofre desta origem e volta pra fachada limpa (cache-buster).
+  window.addEventListener('message', function(e) {
+    if (e.data === 'logout') {
+      try { localStorage.clear(); sessionStorage.clear(); } catch(err) {}
+      window.location.replace('https://thiagobarretosn-hue.github.io/bolao-copa/?sair=' + Date.now());
+    }
+  });
+</script>
+</body>
+</html>
