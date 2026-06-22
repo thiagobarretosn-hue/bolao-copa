@@ -50,14 +50,17 @@
   ifr.onload = function(){ var s=document.getElementById('splash'); if(s) s.style.display='none'; };
   ifr.src = src;
   if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js').catch(function(){}); }
-  // Logout: só aceita a mensagem vinda do iframe do Google (não de qualquer frame externo).
+  // Mensagens do iframe (só aceita as vindas do app Google, não de qualquer frame externo).
   window.addEventListener('message', function(e) {
-    if (e.data !== 'logout') return;
     var ok = false;
     try { ok = /\.googleusercontent\.com$|\.google\.com$/.test(new URL(e.origin).hostname); } catch (_) {}
     if (!ok) return;
-    try { localStorage.removeItem(KEY); localStorage.removeItem(AKEY); localStorage.removeItem('bolao_token'); sessionStorage.clear(); } catch(err) {}
-    window.location.replace('https://thiagobarretosn-hue.github.io/bolao-copa/?sair=' + Date.now());
+    if (e.data === 'logout') {
+      try { localStorage.removeItem(KEY); localStorage.removeItem(AKEY); localStorage.removeItem('bolao_token'); sessionStorage.clear(); } catch(err) {}
+      window.location.replace('https://thiagobarretosn-hue.github.io/bolao-copa/?sair=' + Date.now());
+    } else if (e.data && e.data.tipo === 'bolao_token' && e.data.token) {
+      try { localStorage.setItem(KEY, e.data.token); } catch(err) {}   // login por senha: grava p/ o PWA lembrar a conta
+    }
   });
 </script>
 </body>
